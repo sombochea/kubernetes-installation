@@ -89,11 +89,24 @@ sudo systemctl enable --now kubelet
 kubeadm version
 ```
 
-#### Install Docker
+#### Disable swap and install docker.io
 ```shell
 sudo swapoff -a
 wget https://sh.osa.cubetiqs.com/docker-setup.sh
 bash docker-setup.sh
+sudo systemctl start docker
+sudo systemctl enable docker
+
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
 ```
 
 #### Install some required tools
@@ -103,5 +116,13 @@ sudo apt-get -y install socat conntrack
 
 ### 5. Cluster on Master node
 ```shell
-kubeadm init --apiserver-advertise-address=10.10.0.10 --pod-network-cidr=172.15.0.0/16
+sudo kubeadm init
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
