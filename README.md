@@ -27,3 +27,8 @@ mv ./kubectl ~/.local/bin/kubectl
 ```shell
 kubectl version --client
 ```
+
+# Install Helm 3
+```shell
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
