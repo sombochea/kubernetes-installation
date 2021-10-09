@@ -163,16 +163,24 @@ sudo apt-get -y install socat conntrack
 
 ### 7. Cluster on Master node
 ```shell
-sudo kubeadm init
+sudo kubeadm init --pod-network-cidr 172.16.1.0/24
+```
 
+```shell
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
+#### Cluster Netowrk with Flannel
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+```
+
+#### Cluster Network with Calico
+```shell
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
 #### Kubernetes Dashboard
