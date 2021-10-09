@@ -46,3 +46,11 @@ EOF
 
 sudo sysctl --system
 ```
+
+# Install CNI plugins (required for most pod network)
+```shell
+CNI_VERSION="v0.8.2"
+ARCH="amd64"
+sudo mkdir -p /opt/cni/bin
+curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
+```
