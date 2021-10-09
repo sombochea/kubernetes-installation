@@ -48,7 +48,7 @@ sudo sysctl --system
 ```
 
 # Install kubernetes tools
-### Install CNI plugins (required for most pod network)
+### 1. Install CNI plugins (required for most pod network)
 ```shell
 CNI_VERSION="v0.8.2"
 ARCH="amd64"
@@ -61,14 +61,14 @@ DOWNLOAD_DIR=/usr/local/bin
 sudo mkdir -p $DOWNLOAD_DIR
 ```
 
-### Install crictl (required for kubeadm / Kubelet Container Runtime Interface (CRI))
+### 2. Install crictl (required for kubeadm / Kubelet Container Runtime Interface (CRI))
 ```shell
 CRICTL_VERSION="v1.17.0"
 ARCH="amd64"
 curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${ARCH}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
 ```
 
-### Install kubeadm, kubelet and add a kubelet systemd service
+### 3. Install kubeadm, kubelet and add a kubelet systemd service
 ```shell
 RELEASE="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
 ARCH="amd64"
@@ -80,4 +80,29 @@ RELEASE_VERSION="v0.4.0"
 curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service
 sudo mkdir -p /etc/systemd/system/kubelet.service.d
 curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VERSION}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+sudo systemctl enable --now kubelet
+```
+
+### 4. Verify installation for kubernetes tools
+```shell
+kubeadm version
+```
+
+#### Install Docker
+```shell
+sudo swapoff -a
+wget https://sh.osa.cubetiqs.com/docker-setup.sh
+bash docker-setup.sh
+```
+
+#### Install some required tools
+```shell
+sudo apt-get -y install socat
+sudo apt install conntrack
+```
+
+### 5. Cluster on Master node
+```shell
+kubeadm init --apiserver-advertise-address=10.10.0.10 --pod-network-cidr=172.15.0.0/16
 ```
