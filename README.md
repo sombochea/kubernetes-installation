@@ -98,8 +98,7 @@ bash docker-setup.sh
 
 #### Install some required tools
 ```shell
-sudo apt-get -y install socat
-sudo apt install conntrack
+sudo apt-get -y install socat conntrack
 ```
 
 ### 5. Cluster on Master node
