@@ -98,7 +98,7 @@ EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
 
-# Setup required sysctl params, these persist across reboots.
+# Setup required sysctl params, these persist across reboots. (If using crio)
 cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
@@ -116,6 +116,7 @@ containerd config default | sudo tee /etc/containerd/config.toml
 sudo systemctl restart containerd
 ```
 
+**If using crio**
 - Update config
 ```shell
 sudo nano /etc/containerd/config.toml
