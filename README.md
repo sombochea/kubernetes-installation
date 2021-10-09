@@ -140,8 +140,6 @@ wget https://sh.osa.cubetiqs.com/docker-setup.sh
 bash docker-setup.sh
 sudo systemctl start docker
 sudo systemctl enable docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
 
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
@@ -153,6 +151,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
   "storage-driver": "overlay2"
 }
 EOF
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 ```
 
 #### Install some required tools
