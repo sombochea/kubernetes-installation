@@ -241,5 +241,15 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
    openssl dgst -sha256 -hex | sed 's/^.* //'
 ```
 
+#### Fix Helm Kube Config
+```text
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: ~/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: ~/.kube/config
+```
+```shell
+chmod o-r ~/.kube/config
+chmod g-r ~/.kube/config
+```
+
 #### References
 - https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
