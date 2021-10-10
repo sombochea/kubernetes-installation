@@ -188,5 +188,16 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 ```
 
+#### Deploy Storage Class with External NFS server
+```shell
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+```
+
+```shell
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+    --set nfs.server=nfs-server-ip \
+    --set nfs.path=/exported-path
+```
+
 #### References
 - https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
