@@ -199,5 +199,47 @@ helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs
     --set nfs.path=/exported-path
 ```
 
+#### Create Service Account for Kubernetes Dashboard Token
+- Create file: `dashboard-adminuser.yml`
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kube-system
+```
+```shell
+ kubectl apply -f dashboard-adminuser.yml
+ ```
+ 
+- Create file: `admin-role-binding.yml`
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kube-system
+```
+```shell
+ kubectl apply -f admin-role-binding.yml
+ ```
+- Get Token
+```shell
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+```
+
+#### Get Kubernetes PKI Hash for Kubeadm
+```shell
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | \
+   openssl dgst -sha256 -hex | sed 's/^.* //'
+```
+
 #### References
 - https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
