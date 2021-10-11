@@ -189,6 +189,12 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/a
 ```
 
 #### Deploy Storage Class with External NFS server
+- Install nfs client for all nodes
+```shell
+sudo apt install nfs-common -y
+```
+
+- Install NFS External Provider
 ```shell
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 ```
