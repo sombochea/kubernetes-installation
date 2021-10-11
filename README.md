@@ -88,7 +88,36 @@ sudo systemctl enable --now kubelet
 ```shell
 kubeadm version
 ```
-### 5. Configure containerd
+
+### 5. Disable swap and install docker.io
+```shell
+sudo swapoff -a
+wget https://sh.osa.cubetiqs.com/docker-setup.sh
+bash docker-setup.sh
+sudo systemctl start docker
+sudo systemctl enable docker
+
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+#### Install some required tools
+```shell
+sudo apt-get -y install socat conntrack
+```
+
+### 6. Configure containerd
 ```shell
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
@@ -130,35 +159,6 @@ sudo nano /etc/containerd/config.toml
 - Restart containerd service
 ```shell
 sudo systemctl restart containerd
-```
-
-
-### 6. Disable swap and install docker.io
-```shell
-sudo swapoff -a
-wget https://sh.osa.cubetiqs.com/docker-setup.sh
-bash docker-setup.sh
-sudo systemctl start docker
-sudo systemctl enable docker
-
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2"
-}
-EOF
-
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-```
-
-#### Install some required tools
-```shell
-sudo apt-get -y install socat conntrack
 ```
 
 ### 7. Cluster on Master node
