@@ -88,7 +88,36 @@ sudo systemctl enable --now kubelet
 ```shell
 kubeadm version
 ```
-### 5. Configure containerd
+
+### 5. Disable swap and install docker.io
+```shell
+sudo swapoff -a
+wget https://sh.osa.cubetiqs.com/docker-setup.sh
+bash docker-setup.sh
+sudo systemctl start docker
+sudo systemctl enable docker
+
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+#### Install some required tools
+```shell
+sudo apt-get -y install socat conntrack
+```
+
+### 6. Configure containerd
 ```shell
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
@@ -132,35 +161,6 @@ sudo nano /etc/containerd/config.toml
 sudo systemctl restart containerd
 ```
 
-
-### 6. Disable swap and install docker.io
-```shell
-sudo swapoff -a
-wget https://sh.osa.cubetiqs.com/docker-setup.sh
-bash docker-setup.sh
-sudo systemctl start docker
-sudo systemctl enable docker
-
-cat <<EOF | sudo tee /etc/docker/daemon.json
-{
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2"
-}
-EOF
-
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-```
-
-#### Install some required tools
-```shell
-sudo apt-get -y install socat conntrack
-```
-
 ### 7. Cluster on Master node
 ```shell
 sudo kubeadm init --pod-network-cidr 172.16.1.0/24
@@ -189,6 +189,12 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/a
 ```
 
 #### Deploy Storage Class with External NFS server
+- Install nfs client for all nodes
+```shell
+sudo apt install nfs-common -y
+```
+
+- Install NFS External Provider
 ```shell
 helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 ```
@@ -251,8 +257,9 @@ chmod o-r ~/.kube/config
 chmod g-r ~/.kube/config
 ```
 
-#### Install kubectl for Windows
+#### Install kubectl and helm for Windows
 - https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+- https://helm.sh/docs/intro/install/
 
 #### References
 - https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
