@@ -251,5 +251,8 @@ chmod o-r ~/.kube/config
 chmod g-r ~/.kube/config
 ```
 
+#### Install kubectl for Windows
+- https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+
 #### References
 - https://kubernetes.io/docs/setup/production-environment/container-runtimes/#docker
