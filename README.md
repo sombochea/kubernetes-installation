@@ -163,7 +163,7 @@ sudo systemctl restart containerd
 
 ### 7. Cluster on Master node
 ```shell
-sudo kubeadm init --pod-network-cidr 172.16.1.0/24
+sudo kubeadm init --pod-network-cidr 10.16.1.0/8
 ```
 
 ```shell
