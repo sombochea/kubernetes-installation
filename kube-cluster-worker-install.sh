@@ -62,8 +62,7 @@ kubeadm version
 
 echo "Downloading and setup docker, containerd and tools..."
 sudo swapoff -a
-wget https://sh.osa.cubetiqs.com/docker-setup.sh
-bash docker-setup.sh
+curl -s -L https://sh.osa.cubetiqs.com/docker-setup.sh | bash
 sudo systemctl start docker
 sudo systemctl enable docker
 
