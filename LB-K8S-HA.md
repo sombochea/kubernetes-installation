@@ -9,7 +9,7 @@
 - Install and start service
 
 ```shell
-sudo apt-get install keepalived -y
+sudo apt-get install haproxy keepalived psmisc -y
 sudo systemctl enable keepalived
 sudo systemctl start keepalived
 ```
@@ -105,4 +105,50 @@ vrrp_instance VI_1 {
 - Restart all nodes for keepalived service
 ```shell
 sudo systemctl restart keepalived
+```
+
+- Edit HAProxy config (for all nodes)
+```shell
+sudo nano /etc/haproxy/haproxy.cfg
+```
+
+```text
+frontend kubernetes
+    bind 192.168.0.10:6443
+    option tcplog
+    mode tcp
+    default_backend kubernetes-master-nodes
+
+backend kubernetes-master-nodes
+    mode tcp
+    balance roundrobin
+    option tcp-check
+    server k8s-master-1 192.168.0.11:6443 check fall 3 rise 2
+    server k8s-master-2 192.168.0.12:6443 check fall 3 rise 2
+    server k8s-master-3 192.168.0.13:6443 check fall 3 rise 2
+
+listen stats
+    bind 192.168.0.10:8080 name hastats
+    mode http
+    stats enable
+    stats uri /
+    stats realm HAProxy\ Statistics
+    stats auth admin:haproxy
+
+```
+
+- Enable HAProxy service
+```shell
+sudo systemctl enable --now haproxy
+```
+
+- Allow for No Local Bind IP Address (Ignore error in HAProxy)
+```shell
+echo "net.ipv4.ip_nonlocal_bind=1" | sudo tee /etc/sysctl.d/ip_nonlocal_bind.conf
+sudo sysctl --system
+```
+
+- Restart HAProxy for configuration
+```shell
+sudo systemctl restart haproxy.service
 ```
