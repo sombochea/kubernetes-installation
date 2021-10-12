@@ -163,13 +163,18 @@ sudo systemctl restart containerd
 
 ### 7. Cluster on Master node
 ```shell
-sudo kubeadm init --pod-network-cidr 172.16.1.0/24
+sudo kubeadm init --pod-network-cidr 10.16.1.0/8
 ```
 
 ```shell
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+##### OR Join Cluster
+```shell
+sudo kubeadm join ip-api-server:6443 --token $TOKEN --discovery-token-ca-cert-hash $DISCOVERY_HASH
 ```
 
 #### Cluster Netowrk with Flannel
