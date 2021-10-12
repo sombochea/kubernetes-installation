@@ -172,6 +172,11 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
+##### OR Join Cluster
+```shell
+sudo kubeadm join ip-api-server:6443 --token $TOKEN --discovery-token-ca-cert-hash $DISCOVERY_HASH
+```
+
 #### Cluster Netowrk with Flannel
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
