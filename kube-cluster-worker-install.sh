@@ -76,6 +76,7 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
+echo "Restart docker service..."
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
