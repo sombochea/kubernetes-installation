@@ -2,7 +2,7 @@
 
 #### Quick install for kubernetes cluster for worker node
 ```shell
-curl -s -L https://raw.githubusercontent.com/sombochea/kubernetes-installation/main/kube-cluster-worker-install.sh | sudo bash
+curl -s -L https://raw.githubusercontent.com/sombochea/kubernetes-installation/main/kube-cluster-worker-install.sh?v=181612102021 | sudo bash
 ```
 
 ### 1. Download kubectl
