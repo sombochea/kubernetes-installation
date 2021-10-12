@@ -33,7 +33,10 @@ ARCH="amd64"
 sudo mkdir -p /opt/cni/bin
 curl -L "https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz" | sudo tar -C /opt/cni/bin -xz
 
-echo "Downloading and install cri tools..."
+DOWNLOAD_DIR=/usr/local/bin
+sudo mkdir -p $DOWNLOAD_DIR
+
+echo "Downloading and install crictl tools..."
 CRICTL_VERSION="v1.17.0"
 ARCH="amd64"
 curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-${ARCH}.tar.gz" | sudo tar -C $DOWNLOAD_DIR -xz
