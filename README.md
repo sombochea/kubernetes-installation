@@ -1,5 +1,10 @@
 # Installation Guide for Kubernetes Cluster
 
+#### Quick install for kubernetes cluster for worker node
+```shell
+curl -s -L https://raw.githubusercontent.com/sombochea/kubernetes-installation/main/kube-cluster-install-r.sh | sudo bash
+```
+
 ### 1. Download kubectl
 ```shell
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
