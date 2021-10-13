@@ -4,6 +4,11 @@
 - HAProxy
 - Kubernetes
 
+### Nodes
+- 2 servers for HA/Keepalived
+- 3 servers for k8s master
+- 5 servers for k8s worker
+
 ### Keepalived
 
 - Install and start service
@@ -15,7 +20,7 @@ sudo systemctl start keepalived
 ```
 
 - Configuration for master nodes
-- k8s-master-1 `/etc/keepalived/keepalived.conf`
+- ha-master-1 `/etc/keepalived/keepalived.conf`
 
 ```config
 global_defs {
@@ -23,42 +28,13 @@ global_defs {
      sysadmin@cubetiqhost.net
      support@cubetiqhost.net
    }
-   notification_email_from k8s-master-1@cubetiqhost.net
+   notification_email_from ha-master-1@cubetiqhost.net
    smtp_server localhost
    smtp_connect_timeout 30
 }
 
 vrrp_instance VI_1 {
     state MASTER
-    interface ens18
-    virtual_router_id 101
-    priority 101
-    advert_int 1
-    authentication {
-        auth_type PASS
-        auth_pass 1111
-    }
-    virtual_ipaddress {
-        192.168.0.10
-    }
-}
-```
-
-- k8s-master-2 (BACKUP) `/etc/keepalived/keepalived.conf`
-
-```config
-global_defs {
-   notification_email {
-     sysadmin@cubetiqhost.net
-     support@cubetiqhost.net
-   }
-   notification_email_from k8s-master-2@cubetiqhost.net
-   smtp_server localhost
-   smtp_connect_timeout 30
-}
-
-vrrp_instance VI_1 {
-    state BACKUP
     interface ens18
     virtual_router_id 101
     priority 100
@@ -73,7 +49,7 @@ vrrp_instance VI_1 {
 }
 ```
 
-- k8s-master-3 (BACKUP) `/etc/keepalived/keepalived.conf`
+- ha-master-2 (BACKUP) `/etc/keepalived/keepalived.conf`
 
 ```config
 global_defs {
@@ -81,7 +57,7 @@ global_defs {
      sysadmin@cubetiqhost.net
      support@cubetiqhost.net
    }
-   notification_email_from k8s-master-3@cubetiqhost.net
+   notification_email_from ha-master-2@cubetiqhost.net
    smtp_server localhost
    smtp_connect_timeout 30
 }
@@ -107,7 +83,7 @@ vrrp_instance VI_1 {
 sudo systemctl restart keepalived
 ```
 
-- Edit HAProxy config (for all nodes)
+- Edit HAProxy config (for all ha nodes)
 ```shell
 sudo nano /etc/haproxy/haproxy.cfg
 ```
@@ -151,4 +127,37 @@ sudo sysctl --system
 - Restart HAProxy for configuration
 ```shell
 sudo systemctl restart haproxy.service
+```
+
+- Use SSH Authentication (Copy Pub for nodes)
+```shell
+for i in $(seq 1 3); do \
+ssh-copy-id -f -i $HOME/.ssh/id_rsa.pub 192.168.0.1${i};\
+done;
+```
+
+#### Initialize cluster with kubeadm
+- Setup k8s-master-1
+```shell
+sudo kubeadm init \
+  --pod-network-cidr "10.16.1.0/8" \
+  --service-dns-domain "apps-lb.cubetiqhost.net" \
+  --control-plane-endpoint "k8s-lb.cubetiqhost.net:6443" \
+  --upload-certs
+```
+
+- Cluster network with calico
+```shell
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+```
+
+- Join control-plane
+```shell
+sudo kubeadm join k8s-lb.cubetiqhost.net:6443 --token $TOKEN --discovery-token-ca-cert-hash $HASH b20a5a71d --control-plane --certificate-key $CERT_KEY
+```
+
+- Join worker
+```shell
+sudo kubeadm join k8s-lb.cubetiqhost.net:6443 --token $TOKEN --discovery-token-ca-cert-hash $HASH
 ```
