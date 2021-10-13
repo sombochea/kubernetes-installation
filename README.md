@@ -197,6 +197,18 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 ```
+- Proxy for kubernetes dashboard
+```shell
+kubectl proxy --namespace kubernetes-dashboard service/kubernetes-dashboard
+```
+
+- Access the proxy
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+
+- Get Token from service account "admin-user"
+```shell
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+```
 
 #### Deploy Storage Class with External NFS server
 - Install nfs client for all nodes
