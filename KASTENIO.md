@@ -56,3 +56,9 @@ kubectl annotate volumesnapshotclass csi-hostpath-snapclass \
 ```shell
 kubectl --namespace kasten-io port-forward service/gateway 8080:8000
 ```
+
+- Open here: http://127.0.0.1:8080/k10/#/
+
+### Reference
+
+- https://docs.kasten.io/latest/install/other/kind.html
