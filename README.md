@@ -187,6 +187,10 @@ sudo kubeadm join ip-api-server:6443 --token $TOKEN --discovery-token-ca-cert-ha
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
 ```
+For Kube 1.17+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
 
 #### Cluster Network with Calico
 ```shell
