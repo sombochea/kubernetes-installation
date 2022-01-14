@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mysql
+---
+apiVersion: mysql.oracle.com/v2alpha1
+kind: InnoDBCluster
+metadata:
+  name: mysql-cluster
+  namespace: mysql
+spec:
+  secretName: mysql-secret
+  instances: 3
+  router:
+    instances: 1
