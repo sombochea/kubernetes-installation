@@ -199,7 +199,7 @@ kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 #### Kubernetes Dashboard
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
 ```
 - Proxy for kubernetes dashboard
 ```shell
