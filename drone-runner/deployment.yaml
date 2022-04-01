@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: drone
   name: drone
   labels:
     app.kubernetes.io/name: drone
@@ -15,14 +16,14 @@ spec:
         app.kubernetes.io/name: drone
     spec:
       containers:
-      - name: runner
-        image: drone/drone-runner-kube:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: DRONE_RPC_HOST
-          value: dci.osa.cubetiqs.com
-        - name: DRONE_RPC_PROTO
-          value: https
-        - name: DRONE_RPC_SECRET
-          value: super-duper-secret
+        - name: runner
+          image: drone/drone-runner-kube:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DRONE_RPC_HOST
+              value: dci.cubetiqs.com
+            - name: DRONE_RPC_PROTO
+              value: https
+            - name: DRONE_RPC_SECRET
+              value: 1a6c2d8b6fac4bf9351e5149c39e7fc4
